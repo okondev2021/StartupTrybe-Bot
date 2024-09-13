@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import viewsets, status
 from .models import IdeaValidation
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from . serializers import IdeaValidationSerializer
 from .utility import generate_response
 
@@ -26,5 +27,20 @@ class Validator(viewsets.ModelViewSet):
 
     return Response({"response": bot_response}, status.HTTP_200_OK)
 
-  # def list(request):
-  #   pass
+  def list(self, request):
+    data = IdeaValidation.objects.filter(user_info = request.user)
+    serializer = IdeaValidationSerializer(data = data, many = True)
+    return Response(serializer.data)
+  
+  def retrieve(self, request, pk):
+    data = IdeaValidation.objects.get(id = pk)
+    serializer = IdeaValidationSerializer(data = data, many = False)
+    return Response(serializer.data)
+  
+  def get_permissions(self):
+        # Define custom permissions for each method
+        if self.action == 'list':  # GET /yourmodel/
+            return [IsAuthenticated()]
+        elif self.action == 'create':  # POST /yourmodel/
+            return [AllowAny()]
+        return [permission() for permission in self.permission_classes]
