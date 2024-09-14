@@ -1,9 +1,9 @@
-import os
+from decouple import config
 import google.generativeai as genai
 from google.ai.generativelanguage_v1beta.types import content
 import markdown
 
-genai.configure(api_key = "AIzaSyChuZFYCh3eJpzLEBnvxsOzw9wowyWpCFU")
+genai.configure(api_key = config('api_key'))
 
 # Create the model
 generation_config = {
