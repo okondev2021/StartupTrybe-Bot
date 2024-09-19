@@ -1,12 +1,12 @@
-from django.shortcuts import render
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import UserSerializer
+from .serializers import UserSerializer, MyTokenObtainPairSerializer
 from .models import CustomUser
+
 
 # Create your views here.
 
@@ -21,7 +21,7 @@ def register(request):
 
             # GET NEW USER FROM DB AND CREATE TOKEN FOR AUTHENTICATION.
             user = CustomUser.objects.get(email = data['email'])
-            refresh = RefreshToken.for_user(user)
+            refresh = MyTokenObtainPairSerializer.get_token(user)
 
             token = {
                 'refresh': str(refresh),
@@ -39,7 +39,7 @@ def logout(request):
         refresh_token = request.data['refresh']
         token = RefreshToken(refresh_token)
         token.blacklist()
-        return Response({"message": "Successfully logged out."}, status=status.HTTP_205_RESET_CONTENT)
+        return Response({"message": "Successfully logged out."}, status=status.HTTP_200_OK)
     except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
