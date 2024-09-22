@@ -15,19 +15,22 @@ class Validator(viewsets.ModelViewSet):
   serializer_class = IdeaValidationSerializer
 
   def create(self, request):
-    data = request.data
-    bot_response = generate_response(request.data['user_idea'], request.data['user_target_market'])
-    if request.user.is_authenticated:
-      data['bot_response'] = bot_response
-      data['user_info'] = request.user.id
-      serializer = self.get_serializer(data = data, many=False)
-      if serializer.is_valid():
-        serializer.save()
+    try:
+      data = request.data
+      bot_response = generate_response(request.data['user_idea'], request.data['user_target_market'])
+      if request.user.is_authenticated:
+        data['bot_response'] = bot_response
+        data['user_info'] = request.user.id
+        serializer = self.get_serializer(data = data, many=False)
+        if serializer.is_valid():
+          serializer.save()
+        else:
+          return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"response": bot_response}, status = status.HTTP_201_CREATED)
       else:
-        return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-      return Response({"response": bot_response}, status = status.HTTP_201_CREATED)
-    else:
-      return Response({"response": bot_response}, status=status.HTTP_200_OK)
+        return Response({"response": bot_response}, status=status.HTTP_200_OK)
+    except:
+       return Response({"Error"})
 
   def list(self, request):
     data = IdeaValidation.objects.filter(user_info = request.user)

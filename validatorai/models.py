@@ -9,3 +9,6 @@ class IdeaValidation(models.Model):
     bot_response = models.TextField()
     user_info = models.ForeignKey(CustomUser, on_delete=models.Case, related_name="user_idea_validation")
     time_stamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-time_stamp']
