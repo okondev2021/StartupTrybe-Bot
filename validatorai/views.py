@@ -17,10 +17,14 @@ class Validator(viewsets.ModelViewSet):
   def create(self, request):
     try:
       data = request.data
+
       bot_response = generate_response(request.data['user_idea'], request.data['user_target_market'])
+
+      # Check if user is authenticated
       if request.user.is_authenticated:
         data['bot_response'] = bot_response
         data['user_info'] = request.user.id
+
         serializer = self.get_serializer(data = data, many=False)
         if serializer.is_valid():
           serializer.save()
@@ -29,8 +33,8 @@ class Validator(viewsets.ModelViewSet):
         return Response({"response": bot_response}, status = status.HTTP_201_CREATED)
       else:
         return Response({"response": bot_response}, status=status.HTTP_200_OK)
-    except:
-       return Response({"Error"})
+    except Exception as e:
+        return Response({"error": "An error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
   def list(self, request):
     data = IdeaValidation.objects.filter(user_info = request.user)
