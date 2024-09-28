@@ -19,59 +19,44 @@ class Validator(viewsets.ModelViewSet):
   serializer_class = IdeaValidationSerializer
 
   def create(self, request):
-    # Timeout period (in seconds)
-    # timeout = 22
-    # try:
     data = request.data
-    
 
-    # # Create a new thread to run the bot response
-    # thread = ResponseThread(request.data['user_idea'], request.data['user_target_market'])
-    # thread.start()
+    combined_response = list()
 
-    # # Wait for the thread to finish or timeout
-    # thread.join(timeout)
-
-    # # If the thread is still alive after the timeout, raise TimeoutException
-    # if thread.is_alive():
-    #     raise TimeoutException()
-
-    # # Check if any exception occurred in the thread
-    # if thread.exception:
-    #     raise thread.exception
-
-    # bot_response = thread.result
     def my_iterator(stream):
       for chunk in stream:
         event_data = {
           "message": chunk.text
         }
+        combined_response.append(chunk.text)
 
         yield f"data: {json.dumps(event_data)}\n\n"
+
 
     stream = generate_response(data['user_idea'], data['user_target_market'])
     # Check if user is authenticated
     if request.user.is_authenticated:
-      data['bot_response'] = "bot_response"
+
+      # Create a stream for real-time response
+      response = StreamingHttpResponse(my_iterator(stream), content_type="text/event-stream")
+
+      # After streaming completes, process and save data
+      full_bot_response = "".join(combined_response)  # Combine accumulated data into one string
+
+      data['bot_response'] = full_bot_response
       data['user_info'] = request.user.id
 
       serializer = self.get_serializer(data = data, many=False)
       if serializer.is_valid():
         serializer.save()
- 
-        return StreamingHttpResponse(my_iterator(stream), content_type="text/event-stream")
-      
+        return response
       else:
         return Response({"error": "Error with validation"}, status=status.HTTP_400_BAD_REQUEST)
-      
-      
-      # return Response({"response": bot_response}, status = status.HTTP_201_CREATED)
-    
     else:
       return StreamingHttpResponse(my_iterator(stream), content_type="text/event-stream")
-      # return Response({"response": bot_response}, status=status.HTTP_200_OK)
+ 
       
-    # except TimeoutException:
+
 
   def list(self, request):
     data = IdeaValidation.objects.filter(user_info = request.user)
