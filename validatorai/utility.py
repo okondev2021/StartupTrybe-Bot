@@ -73,9 +73,11 @@ def generate_response(idea, target_market, timeout=30):
     f"Startup Idea {idea}",
     f"Target Market {target_market}",
     "Idea Validation ",
-  ])
+  ], stream=True)
   # Convert markdown response to HTML
-  response_html_content = markdown.markdown(response.text)
-  formatted_response_html_content = response_html_content.replace('\n', '')
-  return formatted_response_html_content 
+  # response_html_content = markdown.markdown(response.text)
+  # formatted_response_html_content = response_html_content.replace('\n', '')
+  # return formatted_response_html_content 
+  
+  return response
   
