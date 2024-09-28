@@ -39,7 +39,7 @@ class Validator(viewsets.ModelViewSet):
 
   def create(self, request):
     # Timeout period (in seconds)
-    timeout = 22
+    timeout = 30
     try:
       data = request.data
 
