@@ -19,44 +19,31 @@ class Validator(viewsets.ModelViewSet):
   serializer_class = IdeaValidationSerializer
 
   def create(self, request):
+
     data = request.data
 
-    combined_response = list()
+    total_message = []
 
     def my_iterator(stream):
       for chunk in stream:
-        event_data = {
-          "message": chunk.text
-        }
-        combined_response.append(chunk.text)
-
+        total_message.append(chunk.text)
+        event_data = {"message": chunk.text}
         yield f"data: {json.dumps(event_data)}\n\n"
 
+      # this will run after the steam has been exhausted, and the user is authenticated
+      if request.user.is_authenticated:
+        data["bot_response"] = "".join(total_message)
+        data["user_info"] = request.user.id
 
-    stream = generate_response(data['user_idea'], data['user_target_market'])
-    # Check if user is authenticated
-    if request.user.is_authenticated:
+        serializer = self.get_serializer(data=data, many=False)
+        if serializer.is_valid():
+          serializer.save()
 
-      # Create a stream for real-time response
-      response = StreamingHttpResponse(my_iterator(stream), content_type="text/event-stream")
+    # this will return a streaming response if the user is authenticated or not
+    stream = generate_response(data["user_idea"], data["user_target_market"])
+    return StreamingHttpResponse(my_iterator(stream), content_type="text/event-stream")
 
-      # After streaming completes, process and save data
-      full_bot_response = "".join(combined_response)  # Combine accumulated data into one string
-
-      data['bot_response'] = full_bot_response
-      data['user_info'] = request.user.id
-
-      serializer = self.get_serializer(data = data, many=False)
-      if serializer.is_valid():
-        serializer.save()
-        return response
-      else:
-        return Response({"error": "Error with validation"}, status=status.HTTP_400_BAD_REQUEST)
-    else:
-      return StreamingHttpResponse(my_iterator(stream), content_type="text/event-stream")
  
-      
-
 
   def list(self, request):
     data = IdeaValidation.objects.filter(user_info = request.user)
