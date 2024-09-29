@@ -4,14 +4,10 @@ from .models import IdeaValidation
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from . serializers import IdeaValidationSerializer
 from .utility import generate_response
-import signal
 from rest_framework.exceptions import APIException
 import threading
-import time
-
 
 # Create your views here.
-
 
 class TimeoutException(APIException):
   status_code = status.HTTP_408_REQUEST_TIMEOUT
@@ -87,9 +83,9 @@ class Validator(viewsets.ModelViewSet):
     return Response(serializer.data)
   
   def get_permissions(self):
-        # Define custom permissions for each method
-        if self.action == 'list':  # GET /yourmodel/
-            return [IsAuthenticated()]
-        elif self.action == 'create':  # POST /yourmodel/
-            return [AllowAny()]
-        return [permission() for permission in self.permission_classes]
+    # Define custom permissions for each method
+    if self.action == 'list':  # GET /yourmodel/
+        return [IsAuthenticated()]
+    elif self.action == 'create':  # POST /yourmodel/
+        return [AllowAny()]
+    return [permission() for permission in self.permission_classes]

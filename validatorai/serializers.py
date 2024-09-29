@@ -6,15 +6,5 @@ class IdeaValidationSerializer(serializers.ModelSerializer):
         model = IdeaValidation
         fields = '__all__'
 
-    # def create(self, data):
-    #     idea = IdeaValidation(
-    #         user_idea = data['user_idea'],
-    #         user_target_market = data['user_target_market'],
-    #         bot_response = data['bot_response'],
-    #         user_info = data['user_info']
-    #     )
-    #     idea.save()
-    #     return idea
-
         
         

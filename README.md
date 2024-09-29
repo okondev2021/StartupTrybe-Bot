@@ -1,30 +1,38 @@
-# PAYSRCOW API INTEGRATION FORM
+# StartupTrybe Idea Validation Backend
 
-This Form is used to get the necessary details from users who want to integrate payscrow escrow service into their business platform.
+This is the backend for  StartupTrybe Idea Validation web application. It makes use of Json web token for authentication and google's gemini for validating user's ideas. The model takes two input [ideas, target market].
 
-## Feature
-This form stores users data as a google form response, providing a cost free way to store our users data and leverage on Google's security.
+## Features
+This project consists to 2 applications.
+1. UserIdea app. This app handles makes of jwt to handle user authentication, token generation, token refresh. 
+2. Validator ai. This app makes use of google gemini ai to validate user idea based on the metrics provided in the prompt, stores logged in user idea, target audience, model response in the database.  
 
-## Deployment
-This will guide you in deploying this project to your preferred platform
+## Installation
 
-### Prerequisites
-This project was built using 
-1. HTML 5
-2. CSS3
-3. JAVASCRIPT
-4. BOOTSTRAP ICONS (CDN)
+### You need to have python installed. Danke
 
-### Getting the project on your local machine
-1. Clone the repository
+1. **Clone the repository:**
+
+    ```sh
+    https://github.com/okondev2021/StartupTrybe-Bot.git
     ```
-    git clone [url]
-    ```
-2. Open the project on your preferred IDE (preferably VSCODE)
-3. Open the project in your browser
 
-### DEPLOYING
-You can deploy this project to
-- [Vercel](https://vercel.com/docs/deployments/git)
-- [Netlify](https://docs.netlify.com/get-started/)
-- [Github](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site)
+2. **Navigate to the project directory:**
+
+    ```sh
+    cd into the project folder
+    ```
+
+3. **Install the dependencies from the requirements.txt file:**
+
+    ```sh
+    pip install -r requirements.txt
+    ```
+
+4. **Start the Server:**
+
+    ```sh
+    python manage.py runserver
+    ```
+
+## This server needs to be running before you launch the frontend application, since alot of data is needed, like token for authentication or refreshing the token. Danke
