@@ -1,12 +1,8 @@
 import json
-
 from django.http import StreamingHttpResponse
-
 from rest_framework.response import Response
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
-
-
 from .models import IdeaValidation
 from . serializers import IdeaValidationSerializer
 from .utility import generate_response
