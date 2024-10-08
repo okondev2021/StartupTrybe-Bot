@@ -6,8 +6,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import IdeaValidation
 from . serializers import IdeaValidationSerializer
 from .utility import generate_response
-
-
+import markdown
 
 
 class Validator(viewsets.ModelViewSet):
@@ -24,11 +23,14 @@ class Validator(viewsets.ModelViewSet):
       for chunk in stream:
         total_message.append(chunk.text)
         event_data = {"message": chunk.text}
-        yield f"data: {json.dumps(event_data)}\n\n"
+        yield json.dumps(event_data)
 
       # this will run after the steam has been exhausted, and the user is authenticated
       if request.user.is_authenticated:
-        data["bot_response"] = "".join(total_message)
+        response_html_content = markdown.markdown("".join(total_message))
+        formatted_response_html_content = response_html_content.replace('\n', '')
+
+        data["bot_response"] = formatted_response_html_content
         data["user_info"] = request.user.id
 
         serializer = self.get_serializer(data=data, many=False)
@@ -38,8 +40,6 @@ class Validator(viewsets.ModelViewSet):
     # this will return a streaming response if the user is authenticated or not
     stream = generate_response(data["user_idea"], data["user_target_market"])
     return StreamingHttpResponse(my_iterator(stream), content_type="text/event-stream")
-
- 
 
   def list(self, request):
     data = IdeaValidation.objects.filter(user_info = request.user)
