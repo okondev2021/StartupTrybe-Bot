@@ -50,10 +50,6 @@ class Validator(viewsets.ModelViewSet):
       if thread.is_alive():
           raise TimeoutException()
 
-      # Check if any exception occurred in the thread
-      if thread.exception:
-          raise thread.exception
-
       bot_response = thread.result
 
       # Check if user is authenticated
