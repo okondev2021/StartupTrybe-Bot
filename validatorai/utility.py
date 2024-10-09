@@ -25,7 +25,7 @@ generation_config = {
 model = genai.GenerativeModel(
   model_name="gemini-1.5-flash",
   generation_config=generation_config,
-  # safety_settings = Adjust safety settings
+  # safety_settings
   # See https://ai.google.dev/gemini-api/docs/safety-settings
 )
 
@@ -73,7 +73,12 @@ def generate_response(idea, target_market, timeout=30):
     f"Startup Idea {idea}",
     f"Target Market {target_market}",
     "Idea Validation ",
-  ], stream=True)
+  ], stream=True, safety_settings=[
+    {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
+    {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+    {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+    {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"}
+  ])
   
   return response
   
