@@ -9,30 +9,51 @@ This project consists to 2 applications.
 
 ## Installation
 
-### You need to have python installed. Danke
+### Prerequisites
+
+- [Python 3.x](https://www.python.org/downloads/) installed on your machine
+
+## SETUP
 
 1. **Clone the repository:**
-
     ```sh
     https://github.com/okondev2021/StartupTrybe-Bot.git
+    cd startuptrybe-bot
     ```
 
-2. **Navigate to the project directory:**
-
+2. **Create a virtual environment:**
     ```sh
-    cd into the project folder
+    python -m venv .venv
     ```
 
-3. **Install the dependencies from the requirements.txt file:**
+3. **Activate the virtual environment:**
 
+    - On Windows:
+      ```sh
+      .venv\Scripts\activate
+      ```
+
+    - On macOS and Linux:
+      ```sh
+      source .venv/bin/activate
+      ```
+
+4. **Install the dependencies from the requirements.txt file:**
     ```sh
     pip install -r requirements.txt
     ```
 
-4. **Start the Server:**
 
+## Usage
+
+1. **Apply migrations:**
+    ```sh
+    python manage.py migrate
+    ```
+
+2. **Start the Server:**
     ```sh
     python manage.py runserver
     ```
 
-## This server needs to be running before you launch the frontend application, since alot of data is needed, like token for authentication or refreshing the token. Danke
+##### This server needs to be running before you launch the frontend application, since alot of data is needed, like token for authentication or refreshing the token. Danke
